@@ -2,9 +2,9 @@
 
 Simulador em Java que lê uma cadeia de referência (sequência de páginas) de um arquivo **CSV**, executa quatro algoritmos de substituição de páginas e mostra quantas **faltas de página** cada um teve. Além da saída no console, o programa gera **gráficos comparativos** em PNG e tem uma **interface gráfica** (Swing).
 
-**Autores:** Thiago Elias (matrícula 2315706) e Maria Emanuelle (matrícula 2410404). **Professor:** Izequiel.
+**Autores:** Thiago Elias (matrícula 2315706) e Maria Emanuelle (matrícula 2410404). **Professor:** Izequiel Norões.
 
-**Relatório:** [relatorio/Relatorio_Simulador_Substituicao_Paginas.pdf](relatorio/Relatorio_Simulador_Substituicao_Paginas.pdf)
+**Relatório:** [PDF](relatorio/Relatorio_Simulador_Substituicao_Paginas.pdf) (no modelo da disciplina) · [DOCX editável](relatorio/Relatorio_Simulador_Substituicao_Paginas.docx) · [versão em Markdown](relatorio/RELATORIO.md)
 
 Algoritmos implementados:
 
@@ -167,5 +167,5 @@ src/
 └── GeradorGraficos.java           geração dos gráficos comparativos (PNG)
 entradas/                          arquivos CSV de exemplo
 graficos/                          gráficos gerados pelo programa
-relatorio/                         relatório do trabalho (PDF e versão em Markdown)
+relatorio/                         relatório do trabalho (PDF, DOCX e versão em Markdown)
 ```
