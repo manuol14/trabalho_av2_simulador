@@ -54,11 +54,27 @@ public class GeradorGraficos {
     private static final Font FONTE_VALOR = new Font("SansSerif", Font.BOLD, 13);
     private static final Font FONTE_EIXO = new Font("SansSerif", Font.PLAIN, 12);
 
+    // cor usada para o algoritmo na posição informada (a interface usa a mesma cor na tabela)
+    public static Color corDoAlgoritmo(int indice) {
+        return CORES[indice];
+    }
+
+    // desenha e já salva o gráfico em PNG (usado pelo programa de console)
+    public static void gerarGraficoBarras(Map<String, Integer> faltas, String subtitulo, Path arquivo) throws IOException {
+        salvar(criarGraficoBarras(faltas, subtitulo), arquivo);
+    }
+
+    public static void gerarGraficoLinhas(Map<String, int[]> faltasPorMolduras, String subtitulo, Path arquivo) throws IOException {
+        salvar(criarGraficoLinhas(faltasPorMolduras, subtitulo), arquivo);
+    }
+
     /**
+     * Desenha o gráfico de barras e devolve a imagem (usado também pela interface gráfica).
+     *
      * @param faltas    nome do algoritmo -> quantidade de faltas de página
      * @param subtitulo texto exibido abaixo do título (ex.: tamanho da cadeia e molduras)
      */
-    public static void gerarGraficoBarras(Map<String, Integer> faltas, String subtitulo, Path arquivo) throws IOException {
+    public static BufferedImage criarGraficoBarras(Map<String, Integer> faltas, String subtitulo) {
         int largura = 900;
         int alturaLinha = 48;
         int espessuraBarra = 24;
@@ -124,14 +140,17 @@ public class GeradorGraficos {
         g.setStroke(new BasicStroke(1f));
         g.draw(new Line2D.Double(x0, y0, x0, y1));
 
-        salvar(imagem, g, arquivo);
+        g.dispose();
+        return imagem;
     }
 
     /**
+     * Desenha o gráfico de linhas e devolve a imagem (usado também pela interface gráfica).
+     *
      * @param faltasPorMolduras nome do algoritmo -> vetor onde a posição i guarda as faltas com (i + 1) molduras
      * @param subtitulo         texto exibido abaixo do título
      */
-    public static void gerarGraficoLinhas(Map<String, int[]> faltasPorMolduras, String subtitulo, Path arquivo) throws IOException {
+    public static BufferedImage criarGraficoLinhas(Map<String, int[]> faltasPorMolduras, String subtitulo) {
         int largura = 900;
         int altura = 550;
 
@@ -224,7 +243,8 @@ public class GeradorGraficos {
             }
         }
 
-        salvar(imagem, g, arquivo);
+        g.dispose();
+        return imagem;
     }
 
     private static void desenharLegenda(Graphics2D g, Map<String, int[]> series, double x, double centroY, boolean comMarcador) {
@@ -335,8 +355,7 @@ public class GeradorGraficos {
         return (int) Math.round(10 * potencia);
     }
 
-    private static void salvar(BufferedImage imagem, Graphics2D g, Path arquivo) throws IOException {
-        g.dispose();
+    private static void salvar(BufferedImage imagem, Path arquivo) throws IOException {
         if (arquivo.getParent() != null) Files.createDirectories(arquivo.getParent());
         ImageIO.write(imagem, "png", arquivo.toFile());
     }

@@ -1,8 +1,8 @@
 # Simulador de Algoritmos de Substituição de Páginas
 
 **Disciplina:** Sistemas Operacionais
-**Integrantes:** Manu () Thiago Elias (2315706)
-**Professor(a):** Izequiel
+**Alunos:** Thiago Elias (matrícula 2315706) e Maria Emanuelle (matrícula 2410404)
+**Professor:** Izequiel
 **Data:** 27/10/2026
 
 **Repositório no GitHub:** https://github.com/manuol14/trabalho_av2_simulador
@@ -12,7 +12,7 @@
 
 ## Resumo
 
-Este trabalho apresenta o desenvolvimento de um simulador, em Java, para avaliar o desempenho de algoritmos de substituição de páginas no gerenciamento de memória virtual. Dos seis algoritmos estudados em sala (FIFO, LRU, Relógio, Ótimo, NFU e Envelhecimento), foram implementados quatro: **FIFO**, **LRU**, **Relógio** e **Ótimo**. O simulador lê a cadeia de referência a partir de um arquivo CSV, calcula o número de faltas de página de cada método e gera gráficos comparativos. Foram analisados cinco cenários com características diferentes. O algoritmo Ótimo obteve o menor número de faltas em todos eles, como esperado. O LRU foi o que mais se aproximou do Ótimo quando a cadeia tinha localidade de referência, chegando a empatar com ele. O FIFO, além de ter o pior resultado na maioria dos casos, apresentou a anomalia de Belady.
+Este trabalho apresenta o desenvolvimento de um simulador, em Java, para avaliar o desempenho de algoritmos de substituição de páginas no gerenciamento de memória virtual. Dos seis algoritmos estudados em sala (FIFO, LRU, Relógio, Ótimo, NFU e Envelhecimento), foram implementados quatro: **FIFO**, **LRU**, **Relógio** e **Ótimo**. O simulador lê a cadeia de referência a partir de um arquivo CSV (ou digitada em uma interface gráfica feita em Swing), calcula o número de faltas de página de cada método e gera gráficos comparativos. Foram analisados cinco cenários com características diferentes. O algoritmo Ótimo obteve o menor número de faltas em todos eles, como esperado. O LRU foi o que mais se aproximou do Ótimo quando a cadeia tinha localidade de referência, chegando a empatar com ele. O FIFO, além de ter o pior resultado na maioria dos casos, apresentou a anomalia de Belady.
 
 ## 1. Introdução
 
@@ -26,6 +26,7 @@ Cada falta de página tem um custo alto, pois envolve acesso ao disco, que é mu
 - Implementar quatro algoritmos de substituição de páginas e informar a quantidade de faltas de página de cada um, no formato `Método N - X faltas de página`.
 - Permitir que a cadeia de referência seja lida de um arquivo CSV, facilitando testar diferentes cenários.
 - Gerar gráficos que permitam comparar visualmente o desempenho dos algoritmos.
+- Oferecer uma interface gráfica para usar o simulador e ver os gráficos comparativos na tela (item extra do trabalho).
 - Analisar em quais situações cada algoritmo é mais adequado.
 
 ## 3. Algoritmos implementados
@@ -52,7 +53,8 @@ O simulador foi desenvolvido em **Java**, sem bibliotecas externas. Todos os alg
 
 | Classe | Responsabilidade |
 |---|---|
-| `SimuladorMemoria` | Programa principal: lê os parâmetros, executa os algoritmos e imprime os resultados |
+| `SimuladorMemoria` | Programa principal (console): lê os parâmetros, executa os algoritmos e imprime os resultados |
+| `SimuladorGUI` | Interface gráfica (Swing) do simulador |
 | `FifoAlgorithm`, `LruAlgorithm`, `ClockAlgorithm`, `OptimalAlgorithm` | Os quatro métodos de substituição |
 | `LeitorCsv` | Lê a cadeia de referência de um arquivo CSV |
 | `GeradorGraficos` | Desenha os gráficos com Java2D e salva em PNG |
@@ -63,6 +65,14 @@ O simulador foi desenvolvido em **Java**, sem bibliotecas externas. Todos os alg
 
 1. **Faltas de página por algoritmo** (barras), com a quantidade de molduras escolhida;
 2. **Faltas de página × número de molduras** (linhas), mostrando como cada algoritmo se comporta conforme a memória aumenta.
+
+**Interface gráfica.** Como item extra, foi feita uma interface gráfica com Swing (classe `SimuladorGUI`). Na janela é possível digitar a cadeia de referência ou abrir um arquivo CSV, escolher um dos exemplos prontos e definir a quantidade de molduras. O resultado aparece em uma tabela com as faltas e a taxa de faltas de cada método, junto com a saída no formato pedido (`Método X - N faltas de página`). Ao lado ficam abas com os dois gráficos comparativos e a tabela de faltas para cada quantidade de molduras. A interface também indica o algoritmo prático com menos faltas e avisa quando ocorre a anomalia de Belady. A simulação é refeita automaticamente quando a quantidade de molduras muda, e o botão "Salvar gráficos (PNG)" grava os gráficos em arquivo. Os gráficos da interface são os mesmos gerados pelo programa de console, desenhados pela classe `GeradorGraficos`.
+
+![Interface gráfica com o exemplo clássico](imagens/interface_grafica.png)
+
+![Interface gráfica mostrando a anomalia de Belady](imagens/interface_grafica_belady.png)
+
+**Execução.** Na pasta do projeto, o código é compilado com `javac -encoding UTF-8 -d out src/*.java`. A interface gráfica é aberta com `java -cp out SimuladorGUI` e a versão de console com `java -cp out SimuladorMemoria [arquivo.csv] [molduras]`. O passo a passo completo está no README do repositório.
 
 **Cenários de teste.** Foram montados cinco arquivos CSV, cada um com uma característica de acesso diferente:
 
@@ -140,13 +150,13 @@ Sem localidade de referência, o histórico de uso não ajuda a prever os próxi
 
 ## 6. Conclusão
 
-O simulador cumpriu o objetivo de comparar os algoritmos de substituição de páginas a partir de cadeias de referência lidas de arquivos CSV, e os gráficos gerados facilitaram a análise. A partir dos resultados, conclui-se que:
+O simulador cumpriu o objetivo de comparar os algoritmos de substituição de páginas a partir de cadeias de referência lidas de arquivos CSV ou digitadas na interface gráfica, e os gráficos gerados facilitaram a análise. A partir dos resultados, conclui-se que:
 
 - O **Ótimo** teve o menor número de faltas em todos os cenários e funciona como limite inferior para comparar os demais, mas não pode ser implementado na prática.
 - O **LRU** foi o melhor algoritmo prático quando a cadeia tem localidade de referência, chegando a empatar com o Ótimo. Porém, tem pior caso em laços maiores que a memória e não superou o FIFO em todas as situações. Seu custo é manter a ordem de uso a cada acesso.
 - O **Relógio** não foi pior que o FIFO em nenhum dos cenários (com a quantidade de molduras escolhida) e, quando havia localidade, ficou próximo do LRU. Ele consegue boa parte do benefício do LRU usando só um bit por moldura, o que explica por que variações dele são usadas em sistemas operacionais reais.
 - O **FIFO** é o mais simples, mas foi o pior na maioria dos cenários e apresentou a anomalia de Belady (mais memória gerando mais faltas).
-- Em todos os algoritmos, aumentar o número de molduras reduz as faltas até o limite das faltas obrigatórias (uma por página distinta). O ganho depende muito do padrão de acesso, como mostrou o cenário do ciclo sequencial.
+- Em geral, aumentar o número de molduras reduz as faltas até o limite das faltas obrigatórias (uma por página distinta), com exceção dos casos de anomalia de Belady no FIFO e no Relógio. O ganho depende muito do padrão de acesso, como mostrou o cenário do ciclo sequencial.
 
 Assim, não existe um algoritmo melhor em todos os casos: o padrão de acesso do programa determina qual política funciona melhor. Na prática, algoritmos que aproximam o LRU com baixo custo, como o Relógio, oferecem o melhor equilíbrio entre desempenho e custo de implementação.
 

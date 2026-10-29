@@ -42,12 +42,7 @@ public class SimuladorMemoria {
         System.out.println("Cadeia de Referência: " + java.util.Arrays.toString(referenceString));
         System.out.println("Quantidade de Molduras: " + frameCount + "\n");
 
-        Map<String, PageReplacementAlgorithm> algorithms = new LinkedHashMap<>();
-        algorithms.put("Método 1 - FIFO", new FifoAlgorithm());
-        algorithms.put("Método 2 - LRU", new LruAlgorithm());
-        algorithms.put("Método 3 - Relógio", new ClockAlgorithm());
-        algorithms.put("Método 4 - Ótimo", new OptimalAlgorithm());
-
+        Map<String, PageReplacementAlgorithm> algorithms = criarAlgoritmos();
 
         Map<String, Integer> resultados = new LinkedHashMap<>();
         algorithms.forEach((name, algorithm) -> {
@@ -59,13 +54,24 @@ public class SimuladorMemoria {
         gerarGraficos(arquivoCsv, referenceString, frameCount, algorithms, resultados);
     }
 
-    private static void gerarGraficos(String arquivoCsv, int[] referenceString, int frameCount,
-                                      Map<String, PageReplacementAlgorithm> algorithms,
-                                      Map<String, Integer> resultados) {
+    // os 4 métodos usados pelo simulador (também usado pela interface gráfica)
+    static Map<String, PageReplacementAlgorithm> criarAlgoritmos() {
+        Map<String, PageReplacementAlgorithm> algorithms = new LinkedHashMap<>();
+        algorithms.put("Método 1 - FIFO", new FifoAlgorithm());
+        algorithms.put("Método 2 - LRU", new LruAlgorithm());
+        algorithms.put("Método 3 - Relógio", new ClockAlgorithm());
+        algorithms.put("Método 4 - Ótimo", new OptimalAlgorithm());
+        return algorithms;
+    }
 
-        // simula de 1 moldura até a quantidade de páginas distintas (a partir daí as faltas não mudam mais)
-        int maxMolduras = Math.max(frameCount, Math.min(paginasDistintas(referenceString), 15));
+    // simula de 1 moldura até a quantidade de páginas distintas (a partir daí as faltas não mudam mais)
+    static int calcularMaxMolduras(int[] referenceString, int frameCount) {
+        return Math.max(frameCount, Math.min(paginasDistintas(referenceString), 15));
+    }
 
+    // executa cada algoritmo com 1, 2, ..., maxMolduras molduras
+    static Map<String, int[]> simularVariandoMolduras(Map<String, PageReplacementAlgorithm> algorithms,
+                                                      int[] referenceString, int maxMolduras) {
         Map<String, int[]> faltasPorMolduras = new LinkedHashMap<>();
         algorithms.forEach((name, algorithm) -> {
             int[] faltas = new int[maxMolduras];
@@ -74,6 +80,15 @@ public class SimuladorMemoria {
             }
             faltasPorMolduras.put(nomeCurto(name), faltas);
         });
+        return faltasPorMolduras;
+    }
+
+    private static void gerarGraficos(String arquivoCsv, int[] referenceString, int frameCount,
+                                      Map<String, PageReplacementAlgorithm> algorithms,
+                                      Map<String, Integer> resultados) {
+
+        int maxMolduras = calcularMaxMolduras(referenceString, frameCount);
+        Map<String, int[]> faltasPorMolduras = simularVariandoMolduras(algorithms, referenceString, maxMolduras);
 
         imprimirTabela(faltasPorMolduras, maxMolduras);
 
@@ -106,14 +121,14 @@ public class SimuladorMemoria {
         }
     }
 
-    private static int paginasDistintas(int[] referenceString) {
+    static int paginasDistintas(int[] referenceString) {
         Set<Integer> distintas = new HashSet<>();
         for (int pagina : referenceString) distintas.add(pagina);
         return distintas.size();
     }
 
     // "Método 1 - FIFO" -> "FIFO"
-    private static String nomeCurto(String name) {
+    static String nomeCurto(String name) {
         return name.substring(name.lastIndexOf(" - ") + 3);
     }
 }

@@ -1,6 +1,10 @@
 # Simulador de Algoritmos de Substituição de Páginas
 
-Simulador em Java que lê uma cadeia de referência (sequência de páginas) de um arquivo **CSV**, executa quatro algoritmos de substituição de páginas e mostra quantas **faltas de página** cada um teve. Além da saída no console, o programa gera **gráficos comparativos** em PNG.
+Simulador em Java que lê uma cadeia de referência (sequência de páginas) de um arquivo **CSV**, executa quatro algoritmos de substituição de páginas e mostra quantas **faltas de página** cada um teve. Além da saída no console, o programa gera **gráficos comparativos** em PNG e tem uma **interface gráfica** (Swing).
+
+**Autores:** Thiago Elias (matrícula 2315706) e Maria Emanuelle (matrícula 2410404). **Professor:** Izequiel.
+
+**Relatório:** [relatorio/Relatorio_Simulador_Substituicao_Paginas.pdf](relatorio/Relatorio_Simulador_Substituicao_Paginas.pdf)
 
 Algoritmos implementados:
 
@@ -20,7 +24,34 @@ Algoritmos implementados:
 
 > Execute sempre a partir da **pasta raiz do projeto**, porque os caminhos `entradas/` e `graficos/` são relativos a ela.
 
-### Pelo terminal
+O projeto tem dois programas:
+
+| Classe | O que faz |
+|---|---|
+| `SimuladorGUI` | **Interface gráfica**: digite a cadeia ou abra um CSV, escolha as molduras e veja os resultados e gráficos na tela |
+| `SimuladorMemoria` | Versão de **console**: lê o CSV, imprime as faltas de cada método e salva os gráficos em PNG |
+
+### Interface gráfica
+
+```bash
+javac -encoding UTF-8 -d out src/*.java
+java -cp out SimuladorGUI
+```
+
+No IntelliJ, abra `src/SimuladorGUI.java` e clique em **Run**.
+
+![Interface gráfica](relatorio/imagens/interface_grafica.png)
+
+Na janela:
+
+1. **Cadeia de referência**: digite as páginas separadas por vírgula, ponto e vírgula ou espaço (Ctrl+Enter simula).
+2. **Abrir CSV…** carrega a cadeia de um arquivo, e **Exemplos** carrega um dos arquivos da pasta `entradas/`.
+3. **Molduras**: quantidade de molduras; ao mudar o valor, a simulação é refeita.
+4. **Resultado** (à esquerda): tabela com as faltas e a taxa de faltas de cada método, a saída no formato `Método X - N faltas de página` e um resumo que indica o melhor algoritmo e avisa se ocorreu a anomalia de Belady.
+5. **Abas** (à direita): gráfico de faltas por algoritmo, gráfico de faltas × número de molduras e a tabela completa por molduras.
+6. **Salvar gráficos (PNG)** grava os dois gráficos em `graficos/<nome-da-entrada>/`.
+
+### Pelo terminal (console)
 
 ```bash
 # 1. compilar
@@ -35,7 +66,7 @@ java -cp out SimuladorMemoria entradas/aleatorio.csv 4
 
 Formato geral: `java -cp out SimuladorMemoria [arquivo.csv] [quantidade de molduras]`
 
-### Pelo IntelliJ IDEA
+### Console pelo IntelliJ IDEA
 
 1. Abra a pasta do projeto no IntelliJ.
 2. Abra `src/SimuladorMemoria.java` e clique em **Run** (seta verde ao lado do `main`).
@@ -125,7 +156,8 @@ Resultados obtidos:
 
 ```text
 src/
-├── SimuladorMemoria.java          programa principal
+├── SimuladorMemoria.java          programa principal (console)
+├── SimuladorGUI.java              interface gráfica (Swing)
 ├── PageReplacementAlgorithm.java  interface comum dos algoritmos
 ├── FifoAlgorithm.java             Método 1 - FIFO
 ├── LruAlgorithm.java              Método 2 - LRU
@@ -135,5 +167,5 @@ src/
 └── GeradorGraficos.java           geração dos gráficos comparativos (PNG)
 entradas/                          arquivos CSV de exemplo
 graficos/                          gráficos gerados pelo programa
-relatorio/                         relatório do trabalho
+relatorio/                         relatório do trabalho (PDF e versão em Markdown)
 ```

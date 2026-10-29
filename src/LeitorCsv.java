@@ -3,6 +3,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -16,12 +17,21 @@ import java.util.List;
  *  - separado por ";" (padrão do Excel em português) ou por espaços.
  *
  * Linhas vazias e linhas que começam com "#" são ignoradas.
- * Se a primeira linha tiver texto (ex.: "paginas"), ela é tratada como cabeçalho.
+ * Se a primeira linha não tiver nenhum número (ex.: "paginas"), ela é tratada como cabeçalho.
  */
 public class LeitorCsv {
 
     public static int[] lerCadeia(String caminhoArquivo) throws IOException {
         List<String> linhas = Files.readAllLines(Path.of(caminhoArquivo), StandardCharsets.UTF_8);
+        return converter(linhas, " do arquivo " + caminhoArquivo);
+    }
+
+    // usado pela interface gráfica, quando a cadeia é digitada na tela
+    public static int[] lerCadeiaDeTexto(String texto) {
+        return converter(Arrays.asList(texto.split("\\R")), "");
+    }
+
+    private static int[] converter(List<String> linhas, String origem) {
         List<Integer> paginas = new ArrayList<>();
         boolean primeiraLinhaDeDados = true;
 
@@ -48,20 +58,20 @@ public class LeitorCsv {
 
             if (primeiroValorInvalido != null) {
                 throw new IllegalArgumentException(
-                        "valor inválido \"" + primeiroValorInvalido + "\" na linha " + (i + 1) + " do arquivo " + caminhoArquivo);
+                        "valor inválido \"" + primeiroValorInvalido + "\" na linha " + (i + 1) + origem);
             }
 
             for (int pagina : valoresDaLinha) {
                 if (pagina < 0) {
                     throw new IllegalArgumentException(
-                            "página negativa (" + pagina + ") na linha " + (i + 1) + "; use apenas números >= 0");
+                            "página negativa (" + pagina + ") na linha " + (i + 1) + origem + "; use apenas números >= 0");
                 }
                 paginas.add(pagina);
             }
         }
 
         if (paginas.isEmpty()) {
-            throw new IllegalArgumentException("nenhuma página encontrada no arquivo " + caminhoArquivo);
+            throw new IllegalArgumentException("nenhuma página encontrada" + origem);
         }
 
         int[] cadeia = new int[paginas.size()];
